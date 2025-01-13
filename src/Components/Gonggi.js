@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import * as THREE from "three";
 
 
-const width = 0.8
-const linewidth = 0.2
+const width = 0.4
+const linewidth = 0.05
 
 function createGonggiShape() {
     const spikes = 7;
-    const outerRadius = 3.5;
-    const innerRadius = 1;
+    const outerRadius = 1.5;
+    const innerRadius = 0.25;
 
     const shape = new THREE.Shape();
     const curvePoints = [];
@@ -48,7 +48,7 @@ function createGonggiShape() {
 const ShapeImage = ({ shape }) => {
 
     return (
-        <mesh position={[0, 0, 2.6]}>
+        <mesh position={[0, 0, 0.8]}>
             <extrudeGeometry args={[shape, { depth: 0.1, bevelEnabled: false }]} />
             <meshStandardMaterial color="white" emissive="white" emissiveIntensity={1} />
         </mesh>
@@ -104,40 +104,72 @@ const Circle = () => {
     return shape;
 };
 
+const getShape = (shape) => {
+    if (shape == "square") {
+        return Square()
+    }
+    else if (shape == "triangle") {
+        return Triangle()
+    }
+    else if (shape == "circle") {
+        return Circle()
+    }
+}
+
+export default function Gonggi({ shape = "triangle", color = "#7b68ee", pos, ...props }) {
+
+    const [gonggiImage, setGonggiImage] = useState(getShape(shape))
+    const [position, setPosition] = useState(pos)
+    const [hovered, setHovered] = useState(false);
+    const [clicked, setClicked] = useState(false);
 
 
-export default function Gonggi({ shape = "triangle", color = "#7b68ee", ...props }) {
 
-    const [gonggiImage, setGonggiImage] = useState(Square())
 
     useEffect(() => {
-        if (shape == "square") {
-            setGonggiImage(Square())
+        if (!clicked) {
+
+            console.log("hover", hovered)
+            var newPos = Array.from(pos)
+            newPos[2] += hovered ? 1 : 0
+            setPosition(newPos)
         }
-        else if (shape == "triangle") {
-            setGonggiImage(Triangle())
+    }, [hovered])
+    useEffect(() => {
+        console.log("click", clicked)
+        if (clicked) {
+
+            var newPos = Array.from(pos)
+            newPos[1] += 1
+            setPosition(newPos)
         }
-        else if (shape == "circle") {
-            setGonggiImage(Circle())
+        else {
+            setPosition(pos)
         }
-    }, [shape])
+    }, [clicked])
 
     return (
-        <group {...props}>
+        <group {...props}
+            position={position}
+            onPointerOver={(e) => setHovered(true)} // Khi hover vào
+            onPointerOut={(e) => setHovered(false)} // Khi rời chuột
+            onClick={(e) => setClicked(!clicked)}  // Khi click
+
+        >
             <mesh>
                 <extrudeGeometry
                     args={[
                         createGonggiShape(),
-                        { depth: 2 },
+                        { depth: 0.5 },
                     ]}
                 />
                 <meshStandardMaterial color={color}
-                    emissive={color} emissiveIntensity={0.05} />
+                    emissive={color} emissiveIntensity={0.05} metalness={0.2} />
             </mesh>
-            <mesh position={[0, 0, 2.1]} rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[1.5, 1.5, 1, 32]} />
+            <mesh position={[0, 0, 0.5]} rotation={[Math.PI / 2, 0, 0]}>
+                <cylinderGeometry args={[0.6, 0.9, 0.7, 32]} />
                 <meshStandardMaterial color={color}
-                    metalness={0.01}
+                    metalness={0.2}
                 />
             </mesh>
             <ShapeImage shape={gonggiImage} />
