@@ -1,14 +1,21 @@
+import { a, useSpring } from "@react-spring/three";
+import { Addition, Base, Geometry } from "@react-three/csg";
 import React, { useEffect, useState } from "react";
 import * as THREE from "three";
+import Shape from "../constants/shape";
+import Random from "../utils/random";
+import Color from "../constants/color";
+import { useHover } from "@use-gesture/react";
 
 
 const width = 0.4
 const linewidth = 0.05
 
+const spikes = 7;
+const outerRadius = 1.5;
+const innerRadius = 0.25;
+
 function createGonggiShape() {
-    const spikes = 7;
-    const outerRadius = 1.5;
-    const innerRadius = 0.25;
 
     const shape = new THREE.Shape();
     const curvePoints = [];
@@ -105,56 +112,52 @@ const Circle = () => {
 };
 
 const getShape = (shape) => {
-    if (shape == "square") {
+    if (shape === Shape.square) {
         return Square()
     }
-    else if (shape == "triangle") {
+    else if (shape === Shape.triangle) {
         return Triangle()
     }
-    else if (shape == "circle") {
+    else if (shape === Shape.circle) {
         return Circle()
     }
 }
 
-export default function Gonggi({ shape = "triangle", color = "#7b68ee", pos, ...props }) {
+export default function Gonggi({ shape = Shape.circle, color = Color.purple, pos, isClicked = false, ...props }) {
 
     const [gonggiImage, setGonggiImage] = useState(getShape(shape))
     const [position, setPosition] = useState(pos)
     const [hovered, setHovered] = useState(false);
-    const [clicked, setClicked] = useState(false);
 
+    const [springProps, setSpringProps] = useSpring(() => ({
+        position: pos,  // Vị trí mặc định từ props
+        config: { tension: 280, friction: 12 }  // Tùy chỉnh tốc độ của animation
+    }));
 
+    const hover = useHover((state) => {
+        if (!isClicked) {
+            const newPos = [...pos];
+            newPos[2] += state.hovering ? 1 : 0;
+            setSpringProps({ position: newPos });
+        }
+    });
 
-
+    // Cập nhật vị trí khi clicked
     useEffect(() => {
-        if (!clicked) {
+        if (isClicked) {
+            const newPos = [...pos];
+            newPos[2] += 1;  // Thay đổi Y-axis khi click
+            setSpringProps({ position: newPos });
+        } else {
+            setSpringProps({ position: pos });  // Trả về vị trí ban đầu
+        }
+    }, [isClicked]);
 
-            console.log("hover", hovered)
-            var newPos = Array.from(pos)
-            newPos[2] += hovered ? 1 : 0
-            setPosition(newPos)
-        }
-    }, [hovered])
-    useEffect(() => {
-        console.log("click", clicked)
-        if (clicked) {
-
-            var newPos = Array.from(pos)
-            newPos[1] += 1
-            setPosition(newPos)
-        }
-        else {
-            setPosition(pos)
-        }
-    }, [clicked])
 
     return (
-        <group {...props}
-            position={position}
-            onPointerOver={(e) => setHovered(true)} // Khi hover vào
-            onPointerOut={(e) => setHovered(false)} // Khi rời chuột
-            onClick={(e) => setClicked(!clicked)}  // Khi click
-
+        <a.group {...props}
+            position={springProps.position}
+            {...hover()}
         >
             <mesh>
                 <extrudeGeometry
@@ -173,6 +176,6 @@ export default function Gonggi({ shape = "triangle", color = "#7b68ee", pos, ...
                 />
             </mesh>
             <ShapeImage shape={gonggiImage} />
-        </group>
+        </a.group>
     );
 }
