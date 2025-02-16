@@ -73,44 +73,35 @@ const HalfOvalSphere = () => {
         <mesh position={[0, 1.8, 0]} geometry={createHalfOvalSphere()} material={material} />
     );
 };
-const HumanModel = () => {
+const Human = () => {
     return (
-        <Canvas style={{ width: '100%', height: '100vh' }}>
-            {/* Ánh sáng */}
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[5, 5, 5]} intensity={1} />
+        <group position={[0, 0, 0]}>
+            {/* Đầu */}
+            <mesh position={[0, 1.8, 0]} scale={[1, 1.2, 1]}>
+                <sphereGeometry args={[1, 32, 32]} />
+                <meshStandardMaterial color="#000000" />
+            </mesh>
 
-            {/* Mô hình Pink Man */}
-            <group position={[0, 0, 0]}>
-                {/* Đầu */}
-                <mesh position={[0, 1.8, 0]} scale={[1, 1.2, 1]}>
-                    <sphereGeometry args={[1, 32, 32]} />
-                    <meshStandardMaterial color="#000000" />
-                </mesh>
-
-                <HalfOvalSphere />
-                <mesh position={[0, 1.7, 0]}>
-                    <cylinderGeometry args={[1, 1, 0.1, 32]} />
-                    <meshStandardMaterial color="#3b3c36" />
-                </mesh>
-                <mesh position={[-0.1, 1.4, 0.45]} rotation={[0, 0, Math.PI / 2]}>
-                    <cylinderGeometry args={[0.6, 0.6, 0.1, 32]} />
-                    <meshStandardMaterial color="#3b3c36" />
-                </mesh>
-                <mesh position={[0.1, 1.4, 0.45]} rotation={[0, 0, Math.PI / 2]}>
-                    <cylinderGeometry args={[0.6, 0.6, 0.1, 32]} />
-                    <meshStandardMaterial color="#3b3c36" />
-                </mesh>
-                <ShapeImage shape={Triangle()} />
-                <mesh position={[0, 1, 0]}>
-                    <cylinderGeometry args={[0.5, 0.5, 2, 32]} />
-                    <meshStandardMaterial color="#f5c6a5" />
-                </mesh>
-            </group>
-            {/* Điều khiển */}
-            <OrbitControls />
-        </Canvas>
+            <HalfOvalSphere />
+            <mesh position={[0, 1.7, 0]}>
+                <cylinderGeometry args={[1, 1, 0.1, 32]} />
+                <meshStandardMaterial color="#3b3c36" />
+            </mesh>
+            <mesh position={[-0.1, 1.4, 0.45]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.6, 0.6, 0.1, 32]} />
+                <meshStandardMaterial color="#3b3c36" />
+            </mesh>
+            <mesh position={[0.1, 1.4, 0.45]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.6, 0.6, 0.1, 32]} />
+                <meshStandardMaterial color="#3b3c36" />
+            </mesh>
+            <ShapeImage shape={Triangle()} />
+            <mesh position={[0, 1, 0]}>
+                <cylinderGeometry args={[0.5, 0.5, 2, 32]} />
+                <meshStandardMaterial color="#f5c6a5" />
+            </mesh>
+        </group>
     );
 };
 
-export default HumanModel;
+export default Human;

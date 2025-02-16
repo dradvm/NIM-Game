@@ -1,39 +1,79 @@
-import React from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import Table from "./components/Table";
-import BoxGonggi from "./components/BoxGonggi";
+import React, { createContext, memo, useCallback, useEffect, useMemo, useState } from "react";
+
+import Screen from "@constants/screen";
+import Menu from "@components/Menu/Menu";
+import { io } from "socket.io-client";
+import MenuModePvP from "@components/Menu/MenuModePvP";
+import MenuModePvE from "@components/Menu/MenuModePvE";
+import Bot from "@constants/bot"
+import GameRoomPvE from "@components/GameRoom/GameRoomPvE";
 
 
 
+// const socket = io("http://localhost:3001");
+
+const GameContext = createContext()
+
+export default memo(function App() {
+  const [screen, setScreen] = useState(Screen.menu)
+  const [botMode, setBotMode] = useState(Bot[0])
+  const [winMode, setWinMode] = useState(true)
+  const [firstPlayMode, setFirstPlayMode] = useState(true)
+
+  const content = useMemo(() => {
+    switch (screen) {
+      case Screen.menu:
+        return <Menu />
+      // return <GameRoom />
+      case Screen.modePvP:
+        return <MenuModePvP />
+      case Screen.modePvE:
+        return <MenuModePvE />
+      case Screen.gamePvE:
+        return <GameRoomPvE />
+      default:
+        return <></>
+    }
+  }, [screen])
 
 
 
-export default function App() {
+  // const [moves, setMoves] = useState([]);
+
+  // useEffect(() => {
+  //   // Lắng nghe khi nhận được nước đi từ đối thủ
+  //   socket.on("receiveMove", (move) => {
+  //     setMoves((prev) => [...prev, move]);
+  //   });
+
+  //   return () => {
+  //     socket.off("receiveMove");
+  //   };
+  // }, []);
+  // const sendMove = () => {
+  //   const move = `Move at ${new Date().toLocaleTimeString()}`;
+  //   socket.emit("sendMove", move);
+  //   setMoves((prev) => [...prev, move]);
+  // };
   return (
-    <div className="h-full relative">
-      <div className="absolute h-full w-full">
-        <Canvas camera={{ position: [0, 50, 30], fov: 50 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-
-
-
-
-          <Table />
-          <BoxGonggi position={[0, 0.25, 0]} isRandomGonggi={true} />
-          <OrbitControls enableRotate={false} enableZoom={false} enablePan={false} />
-        </Canvas>
-      </div>
-
-      {/* <div className="absolute top-0 bg-black h-full w-full opacity-80 blur">
-      </div>
-      <div className="absolute top-0 h-full w-full flex justify-around items-center ">
-        <div className="px-20 py-10 bg-white">
-          START
-        </div>
-      </div> */}
-      {/* <HumanModel /> */}
-    </div>
+    // <div>
+    //   <h1>Online Game</h1>
+    //   <button onClick={sendMove}>Send Move</button>
+    //   <ul>
+    //     {moves.map((move, index) => (
+    //       <li key={index}>{move}</li>
+    //     ))}
+    //   </ul>
+    // </div>
+    <GameContext.Provider value={{
+      screen, setScreen,
+      botMode, setBotMode,
+      winMode, setWinMode,
+      firstPlayMode, setFirstPlayMode
+    }}>
+      {content}
+    </GameContext.Provider>
   );
-}
+})
+
+export { GameContext }

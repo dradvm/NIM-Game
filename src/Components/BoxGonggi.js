@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Geometry, Base, Addition } from '@react-three/csg'
-import { DoubleSide } from 'three';
-import Gonggi from './Gonggi';
-import Random from '../utils/random';
-import { useHover } from '@use-gesture/react';
+import Random from '@utils/random';
+import Player from '@constants/player';
+import Gonggi from '@components/Gonggi';
+import NimContext from '@components/GameRoom/NimContext';
+import { GameContext } from "@/App";
 
 
 
-
-const BoxGonggi = ({
+export default memo(function BoxGonggi({
     lengthBox = 12,
     widthBox = 4,
     heightBox = 2,
@@ -16,44 +16,84 @@ const BoxGonggi = ({
     isRandomGonggi = false,
     distanceGonggi = 3,
     numberGonggi = 10,
-    ...props }) => {
+    indexBox,
+    ...props }) {
 
-    const [length, setLength] = useState(numberGonggi * distanceGonggi)
-    const [width, setWidth] = useState(widthBox)
-    const [height, setHeight] = useState(heightBox)
-    const [wall, setWall] = useState(wallBox)
+    const { botMode } = useContext(GameContext)
+
+    const length = useMemo(() => botMode.level.numberGonggiBox * distanceGonggi, [botMode, distanceGonggi])
+    const width = useMemo(() => widthBox, [widthBox])
+    const height = useMemo(() => heightBox, [heightBox])
+    const wall = useMemo(() => wallBox, [wallBox])
+    const { gameTurn, endPlayerTurn, endComputerTurn, setGonggis, computerSelected } = useContext(NimContext)
+
 
     const [gonggiItems, setGonggiItems] = useState(Array(numberGonggi).fill().map((_, i) => {
         return {
             index: i,
             isVisible: true,
-            isClicked: false,
             color: Random.randomColor(),
             shape: Random.randomShape()
         }
     }))
 
 
-    const handleClickGonggi = (index) => {
+    const handleSelectGonggi = useCallback(((index) => {
+        if (gameTurn === Player.player) {
+            setGonggiItems((prev) => {
+                const newItems = [...prev]
+                newItems.forEach((item) => {
+                    if (item.isVisible) {
+                        item.isVisible = !(item.index <= index)
+                    }
+                })
+                return newItems
+            })
+            setTimeout(endPlayerTurn, 100)
+        }
+    }), [gameTurn])
 
-        setGonggiItems((prev) => {
-            return prev.map((item) => {
-                if (item.index !== index) {
-                    return item
-                }
-                return {
-                    ...item,
-                    // isVisible: false
-                    isClicked: true
+
+
+    useEffect(() => {
+        setGonggis((prev) => {
+            var gonggis = [...prev]
+            gonggis[indexBox] = gonggiItems.reduce((count, item) => count + (item.isVisible ? 1 : 0), 0)
+            return gonggis
+        })
+    }, [gonggiItems, indexBox, setGonggis])
+
+    const visibleGonggiItems = useMemo(() => {
+        return gonggiItems.filter(gonggi => gonggi.isVisible)
+    }, [gonggiItems]);
+    useEffect(() => {
+        if (gameTurn === Player.computer && indexBox === computerSelected.box) {
+
+            var lastGonggiItemVisible = 0
+            gonggiItems.forEach((gonggi) => {
+                if (gonggi.isVisible) {
+                    lastGonggiItemVisible = gonggi.index
                 }
             })
-        })
-    }
-
+            var currentGonggiHoverComputer = lastGonggiItemVisible - computerSelected.gonggi + 1
+            setTimeout(() => {
+                setGonggiItems((prev) => {
+                    const newItems = [...prev]
+                    newItems.forEach((item) => {
+                        if (item.isVisible) {
+                            item.isVisible = !(item.index >= currentGonggiHoverComputer)
+                        }
+                    })
+                    return newItems
+                })
+                endComputerTurn()
+            }, 500)
+        }
+    }, [computerSelected])
 
 
     return (
-        <group {...props} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
+        <group {...props} rotation={[-Math.PI / 2, 0, Math.PI / 2]} >
 
 
             <mesh position={[0, 0, 0]}>
@@ -83,26 +123,19 @@ const BoxGonggi = ({
 
             </mesh>
             <group position={[- ((numberGonggi - 1) * distanceGonggi) / 2, 0, wall]}>
-                {isRandomGonggi ?
-                    gonggiItems.map((gonggi) => {
-                        console.log(gonggi)
-                        if (gonggi.isVisible) {
-                            return (
-                                <Gonggi
-                                    pos={[gonggi.index * distanceGonggi, 0, 0]}
-                                    onClick={() => handleClickGonggi(gonggi.index)}
-                                    color={gonggi.color}
-                                    shape={gonggi.shape}
-                                    isClicked={gonggi.isClicked}
-                                />
-                            )
-                        }
-
-                    })
-                    : ""}
+                {isRandomGonggi &&
+                    visibleGonggiItems.map((gonggi) => (
+                        <Gonggi
+                            key={gonggi.index}
+                            pos={[gonggi.index * distanceGonggi, 0, 0]}
+                            color={gonggi.color}
+                            shape={gonggi.shape}
+                            indexItem={gonggi.index}
+                            onClick={() => handleSelectGonggi(gonggi.index)}
+                        />
+                    ))}
             </group>
         </group>
     );
-};
+});
 
-export default BoxGonggi;

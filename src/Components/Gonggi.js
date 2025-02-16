@@ -1,11 +1,8 @@
-import { a, useSpring } from "@react-spring/three";
-import { Addition, Base, Geometry } from "@react-three/csg";
-import React, { useEffect, useState } from "react";
+import { a } from "@react-spring/three";
+import React, { memo, useMemo, useRef } from "react";
 import * as THREE from "three";
-import Shape from "../constants/shape";
-import Random from "../utils/random";
-import Color from "../constants/color";
-import { useHover } from "@use-gesture/react";
+import Shape from "@constants/shape";
+import Color from "@constants/color";
 
 
 const width = 0.4
@@ -23,7 +20,7 @@ function createGonggiShape() {
     for (let i = 0; i < spikes * 3; i++) {
         const angle = (i * Math.PI * 2) / spikes;
         var radius
-        if (i % 3 == 1 || i % 3 == 2) {
+        if (i % 3 === 1 || i % 3 === 2) {
             radius = outerRadius
         }
         else {
@@ -38,7 +35,7 @@ function createGonggiShape() {
         const currentPoint = curvePoints[i]
         const controlPoint1 = curvePoints[i + 1]
         const controlPoint2 = curvePoints[i + 2]
-        const nextPoint = i != (spikes - 1) * 3 ? curvePoints[i + 3] : curvePoints[0]
+        const nextPoint = i !== (spikes - 1) * 3 ? curvePoints[i + 3] : curvePoints[0]
         const curve = new THREE.CubicBezierCurve3(currentPoint, controlPoint1, controlPoint2, nextPoint)
 
         const points = curve.getPoints(50);
@@ -123,41 +120,20 @@ const getShape = (shape) => {
     }
 }
 
-export default function Gonggi({ shape = Shape.circle, color = Color.purple, pos, isClicked = false, ...props }) {
+export default memo(function Gonggi({
+    shape = Shape.circle,
+    color = Color.purple,
+    pos,
+    indexItem,
+    ...props }) {
 
-    const [gonggiImage, setGonggiImage] = useState(getShape(shape))
-    const [position, setPosition] = useState(pos)
-    const [hovered, setHovered] = useState(false);
+    const gonggiImage = useMemo(() => getShape(shape), [])
 
-    const [springProps, setSpringProps] = useSpring(() => ({
-        position: pos,  // Vị trí mặc định từ props
-        config: { tension: 280, friction: 12 }  // Tùy chỉnh tốc độ của animation
-    }));
-
-    const hover = useHover((state) => {
-        if (!isClicked) {
-            const newPos = [...pos];
-            newPos[2] += state.hovering ? 1 : 0;
-            setSpringProps({ position: newPos });
-        }
-    });
-
-    // Cập nhật vị trí khi clicked
-    useEffect(() => {
-        if (isClicked) {
-            const newPos = [...pos];
-            newPos[2] += 1;  // Thay đổi Y-axis khi click
-            setSpringProps({ position: newPos });
-        } else {
-            setSpringProps({ position: pos });  // Trả về vị trí ban đầu
-        }
-    }, [isClicked]);
 
 
     return (
         <a.group {...props}
-            position={springProps.position}
-            {...hover()}
+            position={pos}
         >
             <mesh>
                 <extrudeGeometry
@@ -178,4 +154,4 @@ export default function Gonggi({ shape = Shape.circle, color = Color.purple, pos
             <ShapeImage shape={gonggiImage} />
         </a.group>
     );
-}
+})

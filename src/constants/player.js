@@ -1,8 +1,8 @@
 const Player = {
-    Player: "player",
-    Computer: "computer",
-    Player1: "player 1",
-    Player2: "player 2"
+    player: "player",
+    computer: "computer",
+    player1: "player 1",
+    player2: "player 2"
 }
 
 export default Player
