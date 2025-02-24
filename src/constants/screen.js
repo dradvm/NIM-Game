@@ -2,9 +2,9 @@ const Screen = {
     menu: "menu",
     setting: "setting",
     lobby: "lobby",
-    modePvP: "modePvP",
-    modePvE: "modePvE",
-    gameModePvP: "gameModePvP",
-    gameModePvE: "gameModePvE"
+    menuPvP: "menuPvP",
+    menuPvE: "menuPvE",
+    gamePvP: "gameModePvP",
+    gamePvE: "gameModePvE"
 }
 export default Screen

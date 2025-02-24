@@ -6,11 +6,21 @@ import bot from "@assets/bot.png"
 import Screen from "@constants/screen"
 import MenuTemplate from "./MenuTemplate"
 import { GameContext } from "@/App"
+import Game from "@constants/game"
 
 export default memo(function Menu() {
 
-    const { setScreen } = useContext(GameContext)
+    const { setScreen, setGameMode } = useContext(GameContext)
 
+    const handleSelectMenuPvP = () => {
+        setGameMode(Game.gamePvP)
+        setScreen(Screen.menuPvP)
+    }
+
+    const handleSelectMenuPvE = () => {
+        setGameMode(Game.gamePvE)
+        setScreen(Screen.menuPvE)
+    }
     return (
         <MenuTemplate>
             <div className="">
@@ -18,14 +28,14 @@ export default memo(function Menu() {
                     image={shape}
                     title={"Chơi trực tuyến"}
                     subTitle={"Chơi với mọi người trên thế giới"}
-                    onClick={() => setScreen(Screen.modePvP)}
+                    onClick={handleSelectMenuPvP}
                 />
                 <MenuButton
                     image={bot}
                     title={"Chơi với máy"}
                     subTitle={"Chơi với máy có thể tùy chỉnh"}
                     marginClass={"mt-4"}
-                    onClick={() => setScreen(Screen.modePvE)}
+                    onClick={handleSelectMenuPvE}
                 />
             </div>
         </MenuTemplate>

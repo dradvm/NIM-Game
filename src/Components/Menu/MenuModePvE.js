@@ -7,7 +7,7 @@ import Screen from "@constants/screen"
 import Player from "@constants/player"
 export default memo(function MenuModePvE() {
 
-    const { botMode, setBotMode, setWinMode, setFirstPlayMode, setScreen } = useContext(GameContext)
+    const { botMode, setBotMode, setWinMode, setIsFirstPlayer, setScreen } = useContext(GameContext)
 
 
 
@@ -27,7 +27,7 @@ export default memo(function MenuModePvE() {
     const playGame = useCallback(() => {
         setBotMode(botSelected)
         setWinMode(!winCondition)
-        setFirstPlayMode(!firstPlay)
+        setIsFirstPlayer(!firstPlay)
         setScreen(Screen.gamePvE)
     })
 

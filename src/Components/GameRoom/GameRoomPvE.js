@@ -2,21 +2,18 @@ import { memo, useCallback, useContext, useEffect, useState } from "react";
 import GameRoom from "./GameRoom";
 import Player from "@constants/player"
 import Level from "@constants/level"
+import Random from "@utils/random"
 import NimContext from "./NimContext"
 import { GameContext } from "@/App";
 
 export default memo(function GameRoomPvE() {
 
 
-    const getRandomNumber = useCallback((min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }, [])
-
     const { botMode, winMode, firstPlayMode } = useContext(GameContext)
-    const [gameTurn, setGameTurn] = useState(firstPlayMode ? Player.player : Player.computer)
+    const [gameTurn, setGameTurn] = useState(!firstPlayMode ? Player.player : Player.computer)
 
     const numberGonggiBox = botMode.level.numberGonggiBox
-    const [gonggis, setGonggis] = useState(Array(numberGonggiBox).fill(0).map(() => getRandomNumber(1, numberGonggiBox)))
+    const [gonggis, setGonggis] = useState(Array(numberGonggiBox).fill(0).map(() => Random.randomNumber(1, numberGonggiBox)))
     const [computerSelected, setComputerSelected] = useState({
         box: -1,
         gonggi: 0
@@ -60,7 +57,6 @@ export default memo(function GameRoomPvE() {
         setGameTurn(Player.player)
     }, [])
 
-
     const handleComputerTurn = useCallback(() => {
 
         var boxSelect
@@ -69,15 +65,15 @@ export default memo(function GameRoomPvE() {
         var boxNotEmpty = gonggis.map((item, index) => item !== 0 ? index : -1).filter((item) => item !== -1)
 
         if (nimSum === 0) {
-            boxSelect = boxNotEmpty[getRandomNumber(0, boxNotEmpty.length - 1)]
-            numberGonggiSelect = getRandomNumber(1, gonggis[boxSelect])
+            boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
+            numberGonggiSelect = Random.randomNumber(1, gonggis[boxSelect])
         }
         else {
             var action = actionChoose()
             console.log(action)
             if (action) {
-                boxSelect = boxNotEmpty[getRandomNumber(0, boxNotEmpty.length - 1)]
-                numberGonggiSelect = getRandomNumber(1, gonggis[boxSelect])
+                boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
+                numberGonggiSelect = Random.randomNumber(1, gonggis[boxSelect])
             }
             else {
                 boxNotEmpty = boxNotEmpty.filter((item) => {
@@ -89,7 +85,7 @@ export default memo(function GameRoomPvE() {
                         return false
                     }
                 })
-                boxSelect = boxNotEmpty[getRandomNumber(0, boxNotEmpty.length - 1)]
+                boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
                 numberGonggiSelect = gonggis[boxSelect] - (gonggis[boxSelect] ^ nimSum)
             }
         }
