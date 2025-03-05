@@ -47,14 +47,14 @@ export default memo(function MenuModePvP() {
         setIsChangeUsername(value)
     })
 
-    const createRoom = () => {
+    const createRoom = useCallback(() => {
         socketRef.current.emit("createRoom", { username, roomname })
-    }
+    }, [socketRef, username, roomname])
 
 
-    const joinRoom = (roomId) => {
+    const joinRoom = useCallback((roomId) => {
         socketRef.current.emit("joinRoom", { username, roomId })
-    }
+    }, [socketRef, username])
 
     useEffect(() => {
 
@@ -63,6 +63,7 @@ export default memo(function MenuModePvP() {
         socketRef.current.emit("callLoadRooms")
 
         socketRef.current.on("loadRooms", (rooms) => {
+            console.log(rooms)
             setRooms(rooms)
         })
 
@@ -72,7 +73,10 @@ export default memo(function MenuModePvP() {
         })
 
 
-
+        return () => {
+            socketRef.current.off("loadRooms")
+            socketRef.current.off("joinedRoom")
+        }
 
 
     }, [])

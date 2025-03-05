@@ -193,7 +193,7 @@ import Player from '@constants/player';
 import Gonggi from '@components/Gonggi';
 import NimContext from '@components/GameRoom/NimContext';
 import { GameContext } from "@/App";
-
+import Game from '@constants/game';
 
 
 export default memo(function BoxGonggi({
@@ -203,17 +203,18 @@ export default memo(function BoxGonggi({
     wallBox = 0.2,
     distanceGonggi = 3,
     numberGonggi = 10,
+    gonggiItemsPvP = [],
     indexBox,
     ...props }) {
 
-    const { botMode } = useContext(GameContext)
+    const { botMode, gameMode, isFirstPlayer, socketRef } = useContext(GameContext)
 
-    const length = useMemo(() => botMode.level.numberGonggiBox * distanceGonggi, [botMode, distanceGonggi])
+    // const length = useMemo(() => botMode.level.numberGonggiBox * distanceGonggi, [botMode, distanceGonggi])
+    const length = useMemo(() => 9 * distanceGonggi, [botMode, distanceGonggi])
     const width = useMemo(() => widthBox, [widthBox])
     const height = useMemo(() => heightBox, [heightBox])
     const wall = useMemo(() => wallBox, [wallBox])
-    const { gameTurn, endPlayerTurn, endComputerTurn, setGonggis, computerSelected } = useContext(NimContext)
-
+    const { gamePlayer, gameTurn, endPlayerTurn, endComputerTurn, endPlayer1Turn, endPlayer2Turn, gonggis, setGonggis, computerSelected } = useContext(NimContext)
 
     const [gonggiItems, setGonggiItems] = useState(Array(numberGonggi).fill().map((_, i) => {
         return {
@@ -225,36 +226,55 @@ export default memo(function BoxGonggi({
     }))
 
 
-    const handleSelectGonggi = useCallback(((index) => {
+    const handleSelectGonggi = useCallback((index) => {
         if (gameTurn === Player.player) {
             setGonggiItems((prev) => {
                 const newItems = [...prev]
                 newItems.forEach((item) => {
-                    if (item.isVisible) {
-                        item.isVisible = !(item.index <= index)
+                    if (item.isVisible && item.index <= index) {
+                        item.isVisible = false
                     }
                 })
                 return newItems
             })
             setTimeout(endPlayerTurn, 100)
         }
-    }), [gameTurn])
+    }, [gameTurn])
 
 
+    const handleSelectGonggiPlayer = useCallback((index) => {
+        if (gameTurn === Player.player1 && gamePlayer === Player.player1) {
+            console.log("click 1")
+            console.log(index, indexBox)
+            socketRef.current.emit("selectGonggi", { index, indexBox })
+            setTimeout(endPlayer1Turn, 100)
+        }
+        else if (gameTurn === Player.player2 && gamePlayer === Player.player2) {
+            console.log("click 2")
+            console.log(index, indexBox)
+            socketRef.current.emit("selectGonggi", { index, indexBox })
+            setTimeout(endPlayer2Turn, 100)
+        }
+
+
+
+    }, [gameTurn])
 
     useEffect(() => {
-        setGonggis((prev) => {
-            var gonggis = [...prev]
-            gonggis[indexBox] = gonggiItems.reduce((count, item) => count + (item.isVisible ? 1 : 0), 0)
-            return gonggis
-        })
+        if (gameMode === Game.gamePvE) {
+            setGonggis((prev) => {
+                var gonggis = [...prev]
+                gonggis[indexBox] = gonggiItems.reduce((count, item) => count + (item.isVisible ? 1 : 0), 0)
+                return gonggis
+            })
+        }
     }, [gonggiItems, indexBox, setGonggis])
 
     const visibleGonggiItems = useMemo(() => {
         return gonggiItems.filter(gonggi => gonggi.isVisible)
     }, [gonggiItems]);
     useEffect(() => {
-        if (gameTurn === Player.computer && indexBox === computerSelected.box) {
+        if (gameMode === Game.gamePvE && gameTurn === Player.computer && indexBox === computerSelected.box) {
 
             var lastGonggiItemVisible = 0
             gonggiItems.forEach((gonggi) => {
@@ -277,6 +297,7 @@ export default memo(function BoxGonggi({
             }, 500)
         }
     }, [computerSelected])
+
 
 
     return (
@@ -310,7 +331,9 @@ export default memo(function BoxGonggi({
 
             </mesh>
             <group position={[- ((numberGonggi - 1) * distanceGonggi) / 2, 0, wall]}>
-                {
+
+                {gameMode === Game.gamePvE
+                    ?
                     visibleGonggiItems.map((gonggi) => (
                         <Gonggi
                             key={gonggi.index}
@@ -320,7 +343,22 @@ export default memo(function BoxGonggi({
                             indexItem={gonggi.index}
                             onClick={() => handleSelectGonggi(gonggi.index)}
                         />
-                    ))}
+                    ))
+                    :
+                    gonggiItemsPvP.filter((gonggi) => gonggi.isVisible).map((gonggi) => (
+                        <Gonggi
+                            key={gonggi.index}
+                            pos={[gonggi.index * distanceGonggi, 0, 0]}
+                            color={gonggi.color}
+                            shape={gonggi.shape}
+                            indexItem={gonggi.index}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleSelectGonggiPlayer(gonggi.index)
+                            }}
+                        />
+                    ))
+                }
             </group>
         </group>
     );

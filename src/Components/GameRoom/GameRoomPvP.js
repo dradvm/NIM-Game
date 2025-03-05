@@ -9,22 +9,23 @@ import GameRoom from "./GameRoom";
 export default memo(function GameRoomPvP() {
 
     const { socketRef, gameMode, isFirstPlayer } = useContext(GameContext)
-    const [gameTurn, setGameTurn] = useState(isFirstPlayer ? Player.player1 : Player.player2)
+    const [gameTurn, setGameTurn] = useState(Player.player1)
+    const [gamePlayer, setGamePlayer] = useState(isFirstPlayer ? Player.player1 : Player.player2)
 
     // const numberGonggiBox = botMode.level.numberGonggiBox
     // const numberGonggiBox = 5
     // const [gonggis, setGonggis] = useState(Array(numberGonggiBox).fill(0).map(() => getRandomNumber(1, numberGonggiBox)))
     const [gonggis, setGonggis] = useState([])
+
+
     const endPlayer1Turn = useCallback(() => {
-        setGameTurn(Player.player2)
+        // setGameTurn(Player.player2)
     }, [])
 
 
     const endPlayer2Turn = useCallback(() => {
-        setGameTurn(Player.player2)
+        // setGameTurn(Player.player1)
     }, [])
-
-
 
 
     const isEndGame = useCallback(() => {
@@ -38,24 +39,24 @@ export default memo(function GameRoomPvP() {
     }, [gameTurn])
 
     useEffect(() => {
-        console.log("render")
-        if (gameMode === Game.gamePvP) {
-            socketRef.current.emit("getGonggis")
-            socketRef.current.on("gonggis", (data) => {
-                console.log(data)
-                setGonggis(data)
-            })
-        }
+        socketRef.current.emit("getGonggis")
+        socketRef.current.on("gonggis", (data) => {
+            setGonggis(data)
+        })
+        socketRef.current.on("turn", (turn) => {
+            setGameTurn(turn ? Player.player1 : Player.player2)
+        })
+
+        // return () => {
+        //     socketRef.current.off("gonggis")
+        //     socketRef.current.off("turn")
+        // }
+
     }, [])
 
-    useEffect(() => {
-        console.log("----")
-        console.log(gonggis)
-        console.log("----")
-    }, [gonggis])
 
     return (
-        <NimContext.Provider value={{ gameTurn, endPlayer1Turn, endPlayer2Turn, gonggis, setGonggis }}>
+        <NimContext.Provider value={{ gamePlayer, gameTurn, endPlayer1Turn, endPlayer2Turn, gonggis, setGonggis }}>
             <GameRoom />
         </NimContext.Provider>
     )

@@ -42,9 +42,11 @@ export default memo(function App() {
   }, [screen])
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3002")
+    socketRef.current = io("http://localhost:3001")
 
-
+    return () => {
+      socketRef.current.disconnect()
+    }
 
   }, [])
 

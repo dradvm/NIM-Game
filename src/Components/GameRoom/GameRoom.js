@@ -96,38 +96,68 @@
 // };
 
 
-import { createContext, memo, useContext, useMemo, useRef } from "react"
+import { createContext, memo, useContext, useEffect, useMemo, useRef, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import Table from "@components/Table"
 import BoxGonggi from "@components/BoxGonggi"
 import { OrbitControls, PointerLockControls } from "@react-three/drei"
 import NimContext from "./NimContext"
 import * as THREE from "three";
+import { GameContext } from "@/App"
+import Game from '@constants/game';
+import Player from '@constants/player';
 export default memo(function GameRoom() {
 
-    const { gonggis } = useContext(NimContext)
-    const numberGonggiBox = useMemo(() => gonggis.length, [])
+    const { socketRef, gameMode } = useContext(GameContext)
+    const { gonggis, gamePlayer } = useContext(NimContext)
+    const numberGonggiBox = useMemo(() => gonggis.length, [gonggis])
+    const [gonggiItems, setGonggiItems] = useState([])
     const x = 300
     const y = 200
-
-    const gonggisDisplay = useMemo(() => gonggis.map((item, index) => {
+    const gonggisDisplayPvE = useMemo(() => gonggis.map((item, index) => {
         return (
             <BoxGonggi position={[index * 6, 0.25, 0]} indexBox={index} numberGonggi={item} />
         )
     }), [])
+    const gamePlayerPerspective = useMemo(() => {
+        console.log(gamePlayer)
+        return (gamePlayer === Player.player1 || gamePlayer === Player.player) ? 40 : -40
+    }, [gamePlayer])
+
+    const gonggisDisplayPvP = useMemo(() => gonggiItems.map((item, index) => {
+        return (
+            <BoxGonggi position={[index * 6, 0.25, 0]} indexBox={index} numberGonggi={item.length} gonggiItemsPvP={item} />
+        )
+    }), [gonggiItems])
+
+    useEffect(() => {
+        if (gameMode === Game.gamePvP) {
+            socketRef.current.emit("getGonggiItems")
+
+            socketRef.current.on("gonggiItems", (data) => {
+                console.log("reload")
+                console.log(data)
+                setGonggiItems(data)
+            })
+        }
+    }, [])
 
     return (
         <div className="h-full w-full">
-            <Canvas gl={{ powerPreference: "high-performance", precision: "lowp", version: 2 }} camera={{ position: [0, 40, 40], fov: 60 }} shadows={false} dpr={[1, 1.5]} frameloop="always">
+            <Canvas gl={{ powerPreference: "high-performance", precision: "lowp", version: 2 }} camera={{ position: [0, 40, gamePlayerPerspective], fov: 60 }} shadows={false} dpr={[1, 1.5]} frameloop="always">
                 <ambientLight intensity={.1} />
-
-
 
 
                 <Table />
                 <group position={[- ((numberGonggiBox - 1) * 6) / 2, 0, 0]}>
 
-                    {gonggisDisplay.map((item) => item)}
+                    {
+                        gameMode === Game.gamePvE
+                            ?
+                            gonggisDisplayPvE.map((item) => item)
+                            :
+                            gonggisDisplayPvP.map((item) => item)
+                    }
                 </group>
 
                 <directionalLight position={[0, y, 0]} intensity={1} />
