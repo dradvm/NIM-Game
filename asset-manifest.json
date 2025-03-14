@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/NIM-Game/static/css/main.80a709bf.css",
+    "main.js": "/NIM-Game/static/js/main.1ebd04ab.js",
+    "static/js/488.507842e4.chunk.js": "/NIM-Game/static/js/488.507842e4.chunk.js",
+    "static/media/bot.png": "/NIM-Game/static/media/bot.d9bb1584f726bcce195a.png",
+    "static/media/MaskMan.png": "/NIM-Game/static/media/MaskMan.1d48f4f9a98a6e15af32.png",
+    "static/media/PixelifySans-VariableFont_wght.ttf": "/NIM-Game/static/media/PixelifySans-VariableFont_wght.088d140132e39b3c37a8.ttf",
+    "static/media/CirclePinkMan.png": "/NIM-Game/static/media/CirclePinkMan.4c2388b36043f141d1b2.png",
+    "static/media/TrianglePinkMan.png": "/NIM-Game/static/media/TrianglePinkMan.a7422514c491f363fbf9.png",
+    "static/media/SquarePinkMan.png": "/NIM-Game/static/media/SquarePinkMan.0556901293e916a923c5.png",
+    "static/media/shape.png": "/NIM-Game/static/media/shape.632706ac985a50435b1d.png",
+    "index.html": "/NIM-Game/index.html",
+    "main.80a709bf.css.map": "/NIM-Game/static/css/main.80a709bf.css.map",
+    "main.1ebd04ab.js.map": "/NIM-Game/static/js/main.1ebd04ab.js.map",
+    "488.507842e4.chunk.js.map": "/NIM-Game/static/js/488.507842e4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.80a709bf.css",
+    "static/js/main.1ebd04ab.js"
+  ]
+}
