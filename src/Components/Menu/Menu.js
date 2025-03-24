@@ -26,7 +26,7 @@ export default memo(function Menu() {
             <div className="">
                 <MenuButton
                     image={shape}
-                    title={"Chơi trực tuyến ABCD"}
+                    title={"Chơi trực tuyến ABCDE"}
                     subTitle={"Chơi với mọi người trên thế giới"}
                     onClick={handleSelectMenuPvP}
                 />
