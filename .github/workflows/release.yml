@@ -27,6 +27,11 @@ jobs:
       - name: Build Electron App
         run: npm run make
 
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "dradvm"
+          git config --global user.email "duynnvn2511@gmail.com"
+
       - name: Deploy App to Github Pages
         run: npm run deploy
 
