@@ -31,6 +31,7 @@ jobs:
         run: |
           git config --global user.name "dradvm"
           git config --global user.email "duynnvn2511@gmail.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/dradvm/NIM-Game.git
 
       - name: Deploy App to Github Pages
         run: npm run deploy
