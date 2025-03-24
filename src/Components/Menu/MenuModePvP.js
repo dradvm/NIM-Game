@@ -60,7 +60,7 @@ export default memo(function MenuModePvP() {
     }, [socketRef, username])
 
     useEffect(() => {
-
+        console.log(socketRef.current.id)
         setUsername(socketRef.current.id)
 
         socketRef.current.emit("callLoadRooms")
