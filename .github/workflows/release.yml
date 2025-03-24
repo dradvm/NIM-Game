@@ -19,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: yum install -y rpm-build
+        run: npm install -y rpm-build
 
       - name: Build Electron App
         run: npm run make
