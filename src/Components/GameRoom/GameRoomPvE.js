@@ -9,19 +9,38 @@ import { GameContext } from "@/App";
 export default memo(function GameRoomPvE() {
 
 
-    const { botMode, winMode, firstPlayMode } = useContext(GameContext)
+    const { botMode, winMode, gameMode, firstPlayMode } = useContext(GameContext)
     const [gameTurn, setGameTurn] = useState(!firstPlayMode ? Player.player : Player.computer)
-
+    const [score, setScore] = useState({ player1: 0, player2: 0 })
     const numberGonggiBox = botMode.level.numberGonggiBox
-    const [gonggis, setGonggis] = useState(Array(numberGonggiBox).fill(0).map(() => Random.randomNumber(1, numberGonggiBox)))
-    const [computerSelected, setComputerSelected] = useState({
-        box: -1,
-        gonggi: 0
-    })
+    const [gonggis, setGonggis] = useState(
+        Array(numberGonggiBox).fill(0).map(() => {
+            const randomSize = Random.randomNumber(1, numberGonggiBox)
+            return Array(randomSize).fill().map((_, i) => ({
+                index: i,
+                isVisible: true,
+                color: Random.randomColor(),
+                shape: Random.randomShape()
+            }));
+        })
+    );
 
 
-    const handlePlayerTurn = useCallback(() => {
-    }, []);
+    const getGonggisNumberInBox = useCallback(() => {
+        return gonggis.map((box) => {
+            return box.reduce((total, gonggi) => total + (gonggi.isVisible ? 1 : 0), 0)
+        })
+    }, [gonggis])
+
+
+    const handleScore = useCallback((isPlayer1Win) => {
+        var scorePlusPlayer1 = isPlayer1Win ? 1 : 0
+        var scorePlusPlayer2 = isPlayer1Win ? 0 : 1
+        setScore((prev) => ({
+            player1: prev.player1 + scorePlusPlayer1,
+            player2: prev.player2 + scorePlusPlayer2
+        }))
+    }, [])
 
     const endPlayerTurn = useCallback(() => {
         setGameTurn(Player.computer)
@@ -61,23 +80,23 @@ export default memo(function GameRoomPvE() {
 
         var boxSelect
         var numberGonggiSelect
-        var nimSum = gonggis.reduce((nimSum, gonggi) => nimSum ^ gonggi, 0)
-        var boxNotEmpty = gonggis.map((item, index) => item !== 0 ? index : -1).filter((item) => item !== -1)
+        const gonggisNumberInBox = getGonggisNumberInBox()
+        var nimSum = gonggisNumberInBox.reduce((nimSum, gonggi) => nimSum ^ gonggi, 0)
+        var boxNotEmpty = gonggisNumberInBox.map((item, index) => item !== 0 ? index : -1).filter((item) => item !== -1)
 
         if (nimSum === 0) {
             boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
-            numberGonggiSelect = Random.randomNumber(1, gonggis[boxSelect])
+            numberGonggiSelect = Random.randomNumber(1, gonggisNumberInBox[boxSelect])
         }
         else {
             var action = actionChoose()
-            console.log(action)
             if (action) {
                 boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
-                numberGonggiSelect = Random.randomNumber(1, gonggis[boxSelect])
+                numberGonggiSelect = Random.randomNumber(1, gonggisNumberInBox[boxSelect])
             }
             else {
                 boxNotEmpty = boxNotEmpty.filter((item) => {
-                    var gonggi = gonggis[item]
+                    var gonggi = gonggisNumberInBox[item]
                     if ((gonggi ^ nimSum) < gonggi) {
                         return true
                     }
@@ -86,35 +105,49 @@ export default memo(function GameRoomPvE() {
                     }
                 })
                 boxSelect = boxNotEmpty[Random.randomNumber(0, boxNotEmpty.length - 1)]
-                numberGonggiSelect = gonggis[boxSelect] - (gonggis[boxSelect] ^ nimSum)
+                numberGonggiSelect = gonggisNumberInBox[boxSelect] - (gonggisNumberInBox[boxSelect] ^ nimSum)
             }
         }
-        setComputerSelected({
-            box: boxSelect,
-            gonggi: numberGonggiSelect
-        })
-    }, [gonggis]);
+        setTimeout(() => {
+            var lastGonggiItemVisible = 0
+            gonggis[boxSelect].forEach((gonggi) => {
+                if (gonggi.isVisible) {
+                    lastGonggiItemVisible = gonggi.index
+                }
+            })
+            var currentGonggiHoverComputer = lastGonggiItemVisible - numberGonggiSelect + 1
+            gonggis[boxSelect].forEach((item) => {
+                if (item.isVisible) {
+                    item.isVisible = !(item.index >= currentGonggiHoverComputer)
+                }
+            })
+            endComputerTurn()
+        }, 500)
+    }, [gonggis, getGonggisNumberInBox]);
 
 
     const isEndGame = useCallback(() => {
-        return gonggis.every((gonggi) => gonggi === 0)
-    }, [gonggis])
+        const gonggisNumberInBox = getGonggisNumberInBox()
+        return gonggisNumberInBox.every((gonggi) => gonggi === 0)
+    }, [getGonggisNumberInBox])
 
     useEffect(() => {
+
         if (!isEndGame()) {
             if (gameTurn === Player.computer) {
                 handleComputerTurn()
             }
             else if (gameTurn === Player.player) {
-                handlePlayerTurn()
             }
+        }
+        else {
+            handleScore(gameTurn !== Player.player)
         }
     }, [gameTurn])
 
 
-
     return (
-        <NimContext.Provider value={{ gameTurn, endPlayerTurn, endComputerTurn, setGonggis, computerSelected, gonggis }}>
+        <NimContext.Provider value={{ gameTurn, setGameTurn, endPlayerTurn, setGonggis, gonggis, score, isEndGame }}>
             <GameRoom />
         </NimContext.Provider>
     )

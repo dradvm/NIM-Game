@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { io } from "socket.io-client";
 import { GameContext } from "../../App";
 import Screen from "@constants/screen"
+import Level from "@constants/level"
 
 
 
@@ -39,8 +40,9 @@ export default memo(function MenuModePvP() {
     const [isChangeUsername, setIsChangeUsername] = useState(false)
     const [username, setUsername] = useState("")
     const [roomname, setRoomname] = useState("")
-    const { setScreen, socketRef, setIsFirstPlayer } = useContext(GameContext)
+    const { setScreen, socketRef, setIsFirstPlayer, setLevelMode } = useContext(GameContext)
     const [rooms, setRooms] = useState([])
+    const [levelSelected, setLevelSelected] = useState(Object.values(Level)[0])
 
 
     const handleIsChangeUsername = useCallback((value) => {
@@ -48,8 +50,9 @@ export default memo(function MenuModePvP() {
     })
 
     const createRoom = useCallback(() => {
-        socketRef.current.emit("createRoom", { username, roomname })
-    }, [socketRef, username, roomname])
+        socketRef.current.emit("createRoom", { username, roomname, level: levelSelected })
+        setLevelMode(levelSelected)
+    }, [socketRef, username, roomname, levelSelected, setLevelMode])
 
 
     const joinRoom = useCallback((roomId) => {
@@ -63,24 +66,22 @@ export default memo(function MenuModePvP() {
         socketRef.current.emit("callLoadRooms")
 
         socketRef.current.on("loadRooms", (rooms) => {
-            console.log(rooms)
             setRooms(rooms)
         })
 
         socketRef.current.on("joinedRoom", (data) => {
             setIsFirstPlayer(data.firstPlayer)
             setScreen(Screen.gamePvP)
+            setLevelMode(data.level)
+        })
+
+        socketRef.current.on("roomDeleted", () => {
+            setScreen(Screen.menuPvP)
         })
 
 
-        return () => {
-            socketRef.current.off("loadRooms")
-            socketRef.current.off("joinedRoom")
-        }
-
 
     }, [])
-
 
 
     return (
@@ -90,7 +91,7 @@ export default memo(function MenuModePvP() {
                     <div className="flex flex-col me-24">
 
                         <div className="bg-gray-950 flex items-center py-3 font-medium">
-                            <div className="text-white text-xl grow text-center">Danh Sách Phòng</div>
+                            <div className="text-white text-lg grow text-center">Danh Sách Phòng</div>
                         </div>
                         <div className="bg-gray-700 flex flex-col px-4 py-3">
                             <div className="mx-2 text-slate-400 font-medium text-sm flex items-center h-10">
@@ -134,7 +135,7 @@ export default memo(function MenuModePvP() {
                                         </div>
                                     ))
                                     :
-                                    <div className="text-slate-400 w-full h-full flex items-center justify-around text-xl font-medium">
+                                    <div className="text-slate-400 w-full h-full flex items-center justify-around text-lg font-medium">
                                         Không có phòng
                                     </div>
                                 }
@@ -146,8 +147,7 @@ export default memo(function MenuModePvP() {
                     <div className="flex flex-col">
                         <div className="flex flex-col">
                             <div className="bg-gray-950 flex items-center justify-around py-3 font-medium">
-                                <div className="text-white text-xl text-center">Tạo Phòng Mới</div>
-
+                                <div className="text-white text-lg text-center">Tạo Phòng Mới</div>
                             </div>
                             <div className="bg-gray-700 flex flex-col px-4 py-3">
                                 <div className="flex font-medium items-center h-10">
@@ -191,9 +191,23 @@ export default memo(function MenuModePvP() {
                                 </div>
                             </div>
                         </div>
+                        <div className="mt-5">
+                            <div className="bg-gray-950 flex items-center justify-around py-3 font-medium">
+                                <div className="text-white text-lg text-center">Số Hộp</div>
+                            </div>
+                            <div className="bg-gray-700 flex flex-col px-4 py-5">
+                                <div className="grid grid-cols-4 gap-4">
+                                    {Object.values(Level).map((level) => (
+                                        <div className={`font-custom flex items-center justify-around text-4xl rounded bg-white h-20 p-1 cursor-pointer ${level === levelSelected && "border-4 border-gray-950"}`} onClick={() => setLevelSelected(level)} >
+                                            {level.numberGonggiBox}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
                         <div
                             onClick={createRoom}
-                            className={`text-2xl font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-5 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-4 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
+                            className={`text-lg font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-5 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-4 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
                             Start
                         </div>
                     </div>

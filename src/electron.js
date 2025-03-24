@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen } = require('electron');
+const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -15,12 +15,13 @@ function createWindow() {
         resizable: true, // Cho phép thay đổi kích thước cửa sổ
         webPreferences: {
             nodeIntegration: true,
+            enableRemoteModule: true,
             contextIsolation: false,
         }
     });
 
 
-    mainWindow.loadURL('http://localhost:3000');
+    mainWindow.loadURL('https://dradvm.github.io/NIM-Game');
 
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -39,4 +40,8 @@ app.on('activate', () => {
     if (mainWindow === null) {
         createWindow();
     }
+});
+
+ipcMain.on("close-app", () => {
+    app.quit();
 });

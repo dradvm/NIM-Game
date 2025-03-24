@@ -19,10 +19,13 @@ export default memo(function App() {
   const [screen, setScreen] = useState(Screen.menu)
   const [gameMode, setGameMode] = useState(null)
   const [botMode, setBotMode] = useState(Bot[0])
+  const [levelMode, setLevelMode] = useState(Bot[0].level)
   const [winMode, setWinMode] = useState(true)
   const [isFirstPlayer, setIsFirstPlayer] = useState(true)
+  const [volume, setVolume] = useState(75);
 
   const socketRef = useRef()
+  const stopAudioRef = useRef(null)
   const content = useMemo(() => {
     switch (screen) {
       case Screen.menu:
@@ -42,7 +45,8 @@ export default memo(function App() {
   }, [screen])
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:3001")
+    socketRef.current = io("https://nim-game-socket.onrender.com/")
+    // socketRef.current = io("localhost:3001")
 
     return () => {
       socketRef.current.disconnect()
@@ -55,11 +59,14 @@ export default memo(function App() {
 
     <GameContext.Provider value={{
       socketRef,
+      stopAudioRef,
       gameMode, setGameMode,
       screen, setScreen,
       botMode, setBotMode,
+      levelMode, setLevelMode,
       winMode, setWinMode,
-      isFirstPlayer, setIsFirstPlayer
+      isFirstPlayer, setIsFirstPlayer,
+      volume, setVolume
     }}>
       {content}
     </GameContext.Provider>

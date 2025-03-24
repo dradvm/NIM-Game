@@ -8,14 +8,12 @@ import GameRoom from "./GameRoom";
 
 export default memo(function GameRoomPvP() {
 
-    const { socketRef, gameMode, isFirstPlayer } = useContext(GameContext)
+    const { socketRef, isFirstPlayer } = useContext(GameContext)
     const [gameTurn, setGameTurn] = useState(Player.player1)
     const [gamePlayer, setGamePlayer] = useState(isFirstPlayer ? Player.player1 : Player.player2)
-
-    // const numberGonggiBox = botMode.level.numberGonggiBox
-    // const numberGonggiBox = 5
-    // const [gonggis, setGonggis] = useState(Array(numberGonggiBox).fill(0).map(() => getRandomNumber(1, numberGonggiBox)))
+    const [score, setScore] = useState({ player1: 0, player2: 0 })
     const [gonggis, setGonggis] = useState([])
+    const [players, setPlayers] = useState([])
 
 
     const endPlayer1Turn = useCallback(() => {
@@ -27,36 +25,60 @@ export default memo(function GameRoomPvP() {
         // setGameTurn(Player.player1)
     }, [])
 
+    const getGonggisNumberInBox = useCallback(() => {
+        return gonggis.map((box) => {
+            return box.reduce((total, gonggi) => total + (gonggi.isVisible ? 1 : 0), 0)
+        })
+    }, [gonggis])
 
     const isEndGame = useCallback(() => {
-        return gonggis.every((gonggi) => gonggi === 0)
-    }, [gonggis])
+        const gonggisNumberInBox = getGonggisNumberInBox()
+        return gonggisNumberInBox.every((gonggi) => gonggi === 0) && gonggis.length > 0
+    }, [getGonggisNumberInBox, gonggis])
+
+
 
     useEffect(() => {
         if (!isEndGame()) {
-
         }
-    }, [gameTurn])
+        else {
+            console.log(score)
+            handleScore(gameTurn !== Player.player1)
+        }
+    }, [gonggis])
+
+
+    const handleScore = useCallback((isPlayer1Win) => {
+        var scorePlusPlayer1 = isPlayer1Win ? 1 : 0
+        var scorePlusPlayer2 = isPlayer1Win ? 0 : 1
+        setScore((prev) => ({
+            player1: prev.player1 + scorePlusPlayer1,
+            player2: prev.player2 + scorePlusPlayer2
+        }))
+    }, [])
 
     useEffect(() => {
         socketRef.current.emit("getGonggis")
+        socketRef.current.emit("getPlayers")
         socketRef.current.on("gonggis", (data) => {
             setGonggis(data)
         })
         socketRef.current.on("turn", (turn) => {
             setGameTurn(turn ? Player.player1 : Player.player2)
         })
+        socketRef.current.on("roomDeleted", () => {
 
-        // return () => {
-        //     socketRef.current.off("gonggis")
-        //     socketRef.current.off("turn")
-        // }
+        })
 
+        socketRef.current.on("players", (data) => {
+            console.log(data)
+            setPlayers([...data])
+        })
     }, [])
 
 
     return (
-        <NimContext.Provider value={{ gamePlayer, gameTurn, endPlayer1Turn, endPlayer2Turn, gonggis, setGonggis }}>
+        <NimContext.Provider value={{ gamePlayer, gameTurn, endPlayer1Turn, endPlayer2Turn, gonggis, setGonggis, score, isEndGame, players }}>
             <GameRoom />
         </NimContext.Provider>
     )
