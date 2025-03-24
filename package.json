@@ -41,7 +41,7 @@
     "electron": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "predeploy": "CI=false npm run build",
+    "predeploy": "CI='' npm run build",
     "deploy": "gh-pages -d build",
     "publish": "electron-forge publish"
   },
