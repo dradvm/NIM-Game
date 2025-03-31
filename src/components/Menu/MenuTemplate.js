@@ -1,14 +1,14 @@
 import { memo, useContext, useEffect } from "react";
 
 import Screen from "@constants/screen"
-import { GameContext } from "../../App";
-export default memo(function MenuTemplate({ children }) {
+import GameContext from "../Context/GameContext";
+export default memo(function MenuTemplate({ children, isPreventBackAction = false }) {
 
     const { setScreen } = useContext(GameContext)
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            if (event.key === "Escape") {
+            if (event.key === "Escape" && !isPreventBackAction) {
                 setScreen(Screen.menu)
             }
         };

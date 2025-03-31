@@ -5,8 +5,8 @@ import shape from "@assets/shape.png"
 import bot from "@assets/bot.png"
 import Screen from "@constants/screen"
 import MenuTemplate from "./MenuTemplate"
-import { GameContext } from "@/App"
 import Game from "@constants/game"
+import GameContext from "../Context/GameContext"
 
 export default memo(function Menu() {
 
@@ -26,7 +26,7 @@ export default memo(function Menu() {
             <div className="">
                 <MenuButton
                     image={shape}
-                    title={"Chơi trực tuyến ABCDE"}
+                    title={"Chơi trực tuyến"}
                     subTitle={"Chơi với mọi người trên thế giới"}
                     onClick={handleSelectMenuPvP}
                 />

@@ -4,9 +4,9 @@ import React, { memo, useCallback, useContext, useEffect, useMemo, useState } fr
 import { Geometry, Base, Addition } from '@react-three/csg'
 import Random from '@utils/random';
 import Player from '@constants/player';
-import Gonggi from '@components/Gonggi';
-import NimContext from '@components/GameRoom/NimContext';
-import { GameContext } from "@/App";
+import Gonggi from './Gonggi';
+import NimContext from '@components/Context/NimContext';
+import GameContext from "@components/Context/GameContext";
 import Game from '@constants/game';
 
 
@@ -82,9 +82,11 @@ export default memo(function BoxGonggi({
 
                 </Geometry>
                 <meshStandardMaterial
-                    metalness={1} // Tăng độ kim loại (0-1)
-                    roughness={0.1} // Giảm độ thô (0-1) để vật liệu trở nên bóng hơn
-                    color="#414a4c" // Màu của vật liệu
+                    metalness={0.5} // Tăng độ kim loại (0-1)
+                    roughness={1} // Giảm độ thô (0-1) để vật liệu trở nên bóng hơn
+                    color="#037a76" // Màu của vật liệu
+                    emissive={"#037a76"}
+                    emissiveIntensity={0.1}
                 />
 
             </mesh>

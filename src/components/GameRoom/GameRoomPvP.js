@@ -1,14 +1,16 @@
 import { memo, useCallback, useContext, useEffect, useState } from "react";
-import NimContext from "./NimContext";
+import NimContext from "../Context/NimContext";
 import Player from "@constants/player"
 import Game from "@constants/game"
-import { GameContext } from "@/App";
 import GameRoom from "./GameRoom";
+import SocketContext from "../Context/SocketContext";
+import GameContext from "../Context/GameContext";
 
 
 export default memo(function GameRoomPvP() {
 
-    const { socketRef, isFirstPlayer } = useContext(GameContext)
+    const { isFirstPlayer } = useContext(GameContext)
+    const { socketRef } = useContext(SocketContext)
     const [gameTurn, setGameTurn] = useState(Player.player1)
     const [gamePlayer, setGamePlayer] = useState(isFirstPlayer ? Player.player1 : Player.player2)
     const [score, setScore] = useState({ player1: 0, player2: 0 })

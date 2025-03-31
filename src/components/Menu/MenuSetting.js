@@ -1,14 +1,18 @@
 import { memo, useCallback, useContext, useState } from "react";
-import { GameContext } from "../../App";
 import Screen from "@constants/screen"
+import Game from "@constants/game"
+import SocketContext from "../Context/SocketContext";
+import GameContext from "../Context/GameContext";
 // const { ipcRenderer } = window.require('electron');
 
 
 export default memo(function MenuSetting({ setIsEscape }) {
-    const { setScreen, socketRef, stopAudioRef, setVolume, volume } = useContext(GameContext)
-
+    const { setScreen, stopAudioRef, setVolume, volume, gameMode } = useContext(GameContext)
+    const { socketRef } = useContext(SocketContext)
     const backToMenu = useCallback(() => {
-        socketRef.current.emit("quitRoom")
+        if (gameMode === Game.gameModePvP) {
+            socketRef.current.emit("quitRoom")
+        }
         stopAudioRef.current?.()
         setScreen(Screen.menu)
     }, [stopAudioRef])

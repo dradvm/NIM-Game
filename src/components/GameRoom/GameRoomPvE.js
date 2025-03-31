@@ -1,16 +1,17 @@
-import { memo, useCallback, useContext, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import GameRoom from "./GameRoom";
 import Player from "@constants/player"
 import Level from "@constants/level"
 import Random from "@utils/random"
-import NimContext from "./NimContext"
-import { GameContext } from "@/App";
+import NimContext from "@components/Context/NimContext";
+import GameContext from "@components/Context/GameContext";
+import SocketContext from "../Context/SocketContext";
 
 export default memo(function GameRoomPvE() {
 
 
-    const { botMode, winMode, gameMode, firstPlayMode } = useContext(GameContext)
-    const [gameTurn, setGameTurn] = useState(!firstPlayMode ? Player.player : Player.computer)
+    const { botMode, isFirstPlayer } = useContext(GameContext)
+    const [gameTurn, setGameTurn] = useState(isFirstPlayer ? Player.player : Player.computer)
     const [score, setScore] = useState({ player1: 0, player2: 0 })
     const numberGonggiBox = botMode.level.numberGonggiBox
     const [gonggis, setGonggis] = useState(
@@ -24,7 +25,7 @@ export default memo(function GameRoomPvE() {
             }));
         })
     );
-
+    const socketRef = useRef(null)
 
     const getGonggisNumberInBox = useCallback(() => {
         return gonggis.map((box) => {
@@ -147,8 +148,10 @@ export default memo(function GameRoomPvE() {
 
 
     return (
-        <NimContext.Provider value={{ gameTurn, setGameTurn, endPlayerTurn, setGonggis, gonggis, score, isEndGame }}>
-            <GameRoom />
-        </NimContext.Provider>
+        <SocketContext.Provider value={{ socketRef }}>
+            <NimContext.Provider value={{ gameTurn, setGameTurn, endPlayerTurn, setGonggis, gonggis, score, isEndGame }}>
+                <GameRoom />
+            </NimContext.Provider>
+        </SocketContext.Provider>
     )
 })

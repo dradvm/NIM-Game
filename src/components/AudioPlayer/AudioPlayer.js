@@ -1,7 +1,7 @@
 import useSound from "use-sound";
 import mySound from "@assets/song.ogg";
 import { memo, useContext, useEffect } from "react";
-import { GameContext } from "../../App";
+import GameContext from "@components/Context/GameContext";
 
 export default memo(function AudioPlayer() {
     const { stopAudioRef, volume } = useContext(GameContext)

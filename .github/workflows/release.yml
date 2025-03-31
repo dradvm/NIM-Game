@@ -18,6 +18,14 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-cache-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm install
 
@@ -30,10 +38,10 @@ jobs:
           git config --global user.email "duynnvn2511@gmail.com"
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/dradvm/NIM-Game.git
 
-      - name: Deploy App to Github Pages
-        env:
-          CI: false
-        run: npm run deploy
+      # - name: Deploy App to Github Pages
+      #   env:
+      #     CI: false
+      #   run: npm run deploy
 
       - name: Publish to GitHub Releases
         env:

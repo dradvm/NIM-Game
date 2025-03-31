@@ -3,7 +3,7 @@ import { useSpring, animated } from "@react-spring/three";
 import { Text } from "@react-three/drei";
 import { memo, useContext, useMemo } from "react";
 import pixelFont from "../../fonts/PixelifySans-VariableFont_wght.ttf";
-import { GameContext } from "../../App";
+import GameContext from "@components/Context/GameContext";
 
 export default memo(function PressButton({
     lengthBox = 8,

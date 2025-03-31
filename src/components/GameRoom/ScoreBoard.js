@@ -1,8 +1,8 @@
-import React, { memo, useContext, useEffect } from "react";
+import React, { memo, useContext, useEffect, useMemo } from "react";
 import { RoundedBox, Text } from "@react-three/drei";
-import pixelFont from "../fonts/PixelifySans-VariableFont_wght.ttf";
+import pixelFont from "../../fonts/PixelifySans-VariableFont_wght.ttf";
 import Game from "@constants/game"
-import { GameContext } from "../App";
+import GameContext from "@components/Context/GameContext";
 export default memo(function ScoreBoard({ player1 = "Player", player2 = "Computer", players = [], score, position = [-40 + 1 + 0.5, 3.8, 0] }) {
 
     const x = 30
@@ -17,10 +17,13 @@ export default memo(function ScoreBoard({ player1 = "Player", player2 = "Compute
 
     const { gameMode } = useContext(GameContext)
 
+    const pos = useMemo(() => {
+        return [position[0] + z / 2, position[1] + y / 2, position[2]]
+    }, [position])
 
 
     return (
-        <group position={position} rotation={[0, Math.PI / 2, 0]}>
+        <group position={pos} rotation={[0, Math.PI / 2, 0]}>
 
             <mesh position={[0, 0, -0.1]}>
                 <boxGeometry args={[x, y, z]} />

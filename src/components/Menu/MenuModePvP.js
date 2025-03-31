@@ -1,30 +1,12 @@
-import { memo, useCallback, useContext, useEffect, useRef, useState } from "react"
+import { createContext, memo, useCallback, useContext, useEffect, useRef, useState } from "react"
 import MenuTemplate from "./MenuTemplate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { io } from "socket.io-client";
-import { GameContext } from "../../App";
 import Screen from "@constants/screen"
 import Level from "@constants/level"
+import SocketContext from "../Context/SocketContext";
+import GameContext from "../Context/GameContext";
 
-
-
-// const [moves, setMoves] = useState([]);
-
-// useEffect(() => {
-//   // Lắng nghe khi nhận được nước đi từ đối thủ
-//   socket.on("receiveMove", (move) => {
-//     setMoves((prev) => [...prev, move]);
-//   });
-
-//   return () => {
-//     socket.off("receiveMove");
-//   };
-// }, []);
-// const sendMove = () => {
-//   const move = `Move at ${new Date().toLocaleTimeString()}`;
-//   socket.emit("sendMove", move);
-//   setMoves((prev) => [...prev, move]);
-// };
 
 
 const Input = memo(function ({ maxLength, ...props }) {
@@ -34,16 +16,15 @@ const Input = memo(function ({ maxLength, ...props }) {
     )
 })
 
-
 export default memo(function MenuModePvP() {
 
     const [isChangeUsername, setIsChangeUsername] = useState(false)
     const [username, setUsername] = useState("")
     const [roomname, setRoomname] = useState("")
-    const { setScreen, socketRef, setIsFirstPlayer, setLevelMode } = useContext(GameContext)
+    const { setScreen, setIsFirstPlayer, setLevelMode } = useContext(GameContext)
+    const { socketRef } = useContext(SocketContext)
     const [rooms, setRooms] = useState([])
     const [levelSelected, setLevelSelected] = useState(Object.values(Level)[0])
-
 
     const handleIsChangeUsername = useCallback((value) => {
         setIsChangeUsername(value)
@@ -60,7 +41,6 @@ export default memo(function MenuModePvP() {
     }, [socketRef, username])
 
     useEffect(() => {
-        console.log(socketRef.current.id)
         setUsername(socketRef.current.id)
 
         socketRef.current.emit("callLoadRooms")
@@ -83,7 +63,6 @@ export default memo(function MenuModePvP() {
 
     }, [])
 
-
     return (
         <MenuTemplate>
             <div className="">
@@ -91,7 +70,7 @@ export default memo(function MenuModePvP() {
                     <div className="flex flex-col me-24">
 
                         <div className="bg-gray-950 flex items-center py-3 font-medium">
-                            <div className="text-white text-lg grow text-center">Danh Sách Phòng</div>
+                            <div className="text-white grow text-center">Danh Sách Phòng</div>
                         </div>
                         <div className="bg-gray-700 flex flex-col px-4 py-3">
                             <div className="mx-2 text-slate-400 font-medium text-sm flex items-center h-10">
@@ -147,18 +126,18 @@ export default memo(function MenuModePvP() {
                     <div className="flex flex-col">
                         <div className="flex flex-col">
                             <div className="bg-gray-950 flex items-center justify-around py-3 font-medium">
-                                <div className="text-white text-lg text-center">Tạo Phòng Mới</div>
+                                <div className="text-white text-center">Tạo Phòng Mới</div>
                             </div>
                             <div className="bg-gray-700 flex flex-col px-4 py-3">
                                 <div className="flex font-medium items-center h-10">
                                     <div className="text-white">
                                         Chơi như:
                                     </div>
-                                    <div className="flex items-center justify-between ms-3 w-64">
+                                    <div className="flex items-center justify-between ms-2 w-64">
                                         <div className="grow">
                                             {!isChangeUsername ?
                                                 <div className="text-white">
-                                                    <div className="">
+                                                    <div className="text-sm">
                                                         {username}
                                                     </div>
 
@@ -172,13 +151,13 @@ export default memo(function MenuModePvP() {
                                                 <FontAwesomeIcon
                                                     onClick={() => handleIsChangeUsername(true)}
                                                     icon="fa-solid fa-square-pen"
-                                                    className="text-lg text-white hover:text-slate-200 text-white cursor-pointer transition ease"
+                                                    className="text-white hover:text-slate-200 text-white cursor-pointer transition ease"
                                                 />
                                                 :
                                                 <FontAwesomeIcon
                                                     onClick={() => handleIsChangeUsername(false)}
                                                     icon="fa-solid fa-square-check"
-                                                    className="text-lg text-white hover:text-slate-200 text-white cursor-pointer transition ease"
+                                                    className="text-white hover:text-slate-200 text-white cursor-pointer transition ease"
                                                 />
                                             }
 
@@ -193,12 +172,12 @@ export default memo(function MenuModePvP() {
                         </div>
                         <div className="mt-5">
                             <div className="bg-gray-950 flex items-center justify-around py-3 font-medium">
-                                <div className="text-white text-lg text-center">Số Hộp</div>
+                                <div className="text-white text-center">Số Hộp</div>
                             </div>
                             <div className="bg-gray-700 flex flex-col px-4 py-5">
-                                <div className="grid grid-cols-4 gap-4">
+                                <div className="grid grid-cols-4 gap-5">
                                     {Object.values(Level).map((level) => (
-                                        <div className={`font-custom flex items-center justify-around text-4xl rounded bg-white h-20 p-1 cursor-pointer ${level === levelSelected && "border-4 border-gray-950"}`} onClick={() => setLevelSelected(level)} >
+                                        <div className={`font-custom flex items-center justify-around text-2xl rounded bg-white h-16  p-1 cursor-pointer ${level === levelSelected && "border-4 border-gray-950"}`} onClick={() => setLevelSelected(level)} >
                                             {level.numberGonggiBox}
                                         </div>
                                     ))}
@@ -207,8 +186,8 @@ export default memo(function MenuModePvP() {
                         </div>
                         <div
                             onClick={createRoom}
-                            className={`text-lg font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-5 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-4 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
-                            Start
+                            className={`font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-5 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-4 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
+                            Bắt Đầu
                         </div>
                     </div>
                 </div>

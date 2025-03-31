@@ -10,8 +10,8 @@ export default memo(function MenuButton({ image, title, subTitle, marginClass = 
                 <img src={image} className="w-full" alt="shape" />
             </div>
             <div className={`w-72 flex flex-col ms-6 text-white`}>
-                <div className="text-2xl font-medium">{title}</div>
-                <div className="mt-1">{subTitle}</div>
+                <div className="text-xl font-medium">{title}</div>
+                <div className="">{subTitle}</div>
             </div>
         </div>
     )
