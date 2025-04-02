@@ -3,7 +3,7 @@ import Screen from "@constants/screen"
 import Game from "@constants/game"
 import SocketContext from "../Context/SocketContext";
 import GameContext from "../Context/GameContext";
-// const { ipcRenderer } = window.require('electron');
+const { ipcRenderer } = window.require('electron');
 
 
 export default memo(function MenuSetting({ setIsEscape }) {
@@ -18,7 +18,7 @@ export default memo(function MenuSetting({ setIsEscape }) {
     }, [stopAudioRef])
 
     const quitGame = useCallback(() => {
-        // ipcRenderer.send('close-app', [])
+        ipcRenderer.send('close-app', [])
     })
 
     return (
