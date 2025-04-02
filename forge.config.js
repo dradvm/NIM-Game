@@ -1,16 +1,17 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
-
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: "public/favicon.ico"
+    // icon: "/src/assets/favicon"
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        // setupIcon: "/src/assets/favicon.ico" // Bắt buộc phải là .ico cho file .exe
+      }
     },
     {
       name: '@electron-forge/maker-zip',

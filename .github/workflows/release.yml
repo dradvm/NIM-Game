@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
       - name: Cache npm dependencies
         uses: actions/cache@v3
         with:
@@ -27,6 +26,7 @@ jobs:
             npm-cache-${{ runner.os }}-
 
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
 
       - name: Build Electron App
