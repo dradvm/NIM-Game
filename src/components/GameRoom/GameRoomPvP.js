@@ -44,7 +44,6 @@ export default memo(function GameRoomPvP() {
         if (!isEndGame()) {
         }
         else {
-            console.log(score)
             handleScore(gameTurn !== Player.player1)
         }
     }, [gonggis])
@@ -73,7 +72,6 @@ export default memo(function GameRoomPvP() {
         })
 
         socketRef.current.on("players", (data) => {
-            console.log(data)
             setPlayers([...data])
         })
     }, [])

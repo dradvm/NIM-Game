@@ -90,7 +90,7 @@ export default memo(function MenuModePvP() {
                             <div className="h-60 overflow-auto">
                                 {rooms.length !== 0 ?
                                     rooms.map((room) => (
-                                        <div className="mb-2 mx-2 font-medium text-sm flex items-center text-white">
+                                        <div key={room.id} className="mb-2 mx-2 font-medium text-sm flex items-center text-white">
                                             <div className="w-16">
                                                 {room.id}
                                             </div>
@@ -177,7 +177,7 @@ export default memo(function MenuModePvP() {
                             <div className="bg-gray-700 flex flex-col px-4 py-5">
                                 <div className="grid grid-cols-4 gap-5">
                                     {Object.values(Level).map((level) => (
-                                        <div className={`font-custom flex items-center justify-around text-2xl rounded bg-white h-16  p-1 cursor-pointer ${level === levelSelected && "border-4 border-gray-950"}`} onClick={() => setLevelSelected(level)} >
+                                        <div key={level.numberGonggiBox} className={`font-custom flex items-center justify-around text-2xl rounded bg-white h-16  p-1 cursor-pointer ${level === levelSelected && "border-4 border-gray-950"}`} onClick={() => setLevelSelected(level)} >
                                             {level.numberGonggiBox}
                                         </div>
                                     ))}

@@ -18,7 +18,7 @@ export default memo(function ScoreBoard({ player1 = "Player", player2 = "Compute
     const { gameMode } = useContext(GameContext)
 
     const pos = useMemo(() => {
-        return [position[0] + z / 2, position[1] + y / 2, position[2]]
+        return [position[0] + z / 2 + 0.1, position[1] + y / 2, position[2]]
     }, [position])
 
 
@@ -33,7 +33,6 @@ export default memo(function ScoreBoard({ player1 = "Player", player2 = "Compute
             <RoundedBox args={[x - 0.2, y - 0.2, z - 0.1]} radius={0.4}>
                 <meshStandardMaterial color="#f5f5f5" />
             </RoundedBox>
-            {console.log(players)}
             {gameMode === Game.gamePvP && players.length < 2 ?
                 <group>
                     <Text

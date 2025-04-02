@@ -34,7 +34,6 @@ export default memo(function GameRendererPvP() {
 
         socketRef.current.on("connect", () => {
             setTimeout(() => {
-                console.log(socketRef.current.id)
                 setIsLoadingSocket(false)
             }, 1000)
         });

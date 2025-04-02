@@ -89,7 +89,7 @@ export default memo(function GameRoom() {
                     {
                         gonggiItems.map((box, index) => {
                             return (
-                                <BoxGonggi position={[index * 6, 0.25, 0]} indexBox={index} boxGonggi={box} />
+                                <BoxGonggi key={index} position={[index * 6, 0.25, 0]} indexBox={index} boxGonggi={box} />
                             )
                         })
                     }

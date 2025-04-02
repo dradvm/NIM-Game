@@ -8,6 +8,7 @@ import Gonggi from './Gonggi';
 import NimContext from '@components/Context/NimContext';
 import GameContext from "@components/Context/GameContext";
 import Game from '@constants/game';
+import SocketContext from '../Context/SocketContext';
 
 
 export default memo(function BoxGonggi({
@@ -22,7 +23,9 @@ export default memo(function BoxGonggi({
     indexBox,
     ...props }) {
 
-    const { botMode, gameMode, isFirstPlayer, socketRef, levelMode } = useContext(GameContext)
+    const { botMode, gameMode, isFirstPlayer, levelMode } = useContext(GameContext)
+
+    const { socketRef } = useContext(SocketContext)
 
     const length = useMemo(() => levelMode.numberGonggiBox * distanceGonggi, [botMode, distanceGonggi])
     const width = useMemo(() => widthBox, [widthBox])
@@ -51,7 +54,7 @@ export default memo(function BoxGonggi({
                 socketRef.current.emit("selectGonggi", { index, indexBox })
             }
         }
-    }, [gameTurn, boxGonggi, endPlayerTurn, gameMode, socketRef, gamePlayer, players])
+    }, [gameTurn, boxGonggi, endPlayerTurn, gameMode, socketRef, gamePlayer, players, indexBox])
 
     useEffect(() => {
         setGonggiItems(boxGonggi)

@@ -26,11 +26,6 @@ export default memo(function MenuModePvE() {
         setIsFirstPlayer(!firstPlay)
         setScreen(Screen.gamePvE)
     })
-
-    useEffect(() => {
-        console.log("B")
-    })
-
     return (
         <MenuTemplate>
             <div className="bg-gray-600 rounded flex flex-col overflow-hidden" style={{ width: "400px" }}>
@@ -72,7 +67,7 @@ export default memo(function MenuModePvE() {
                         </div>
                         <div className="grid grid-cols-4 gap-4 py-3">
                             {Bot.map((bot) => (
-                                <div className={`rounded bg-white h-16 p-1 cursor-pointer ${bot === botSelected && "border-2 border-gray-800"}`} onClick={() => setBotSelected(bot)} >
+                                <div key={bot.name} className={`rounded bg-white h-16 p-1 cursor-pointer ${bot === botSelected && "border-2 border-gray-800"}`} onClick={() => setBotSelected(bot)} >
                                     <img src={bot.image} className="w-full h-full" alt="shape" />
                                 </div>
                             ))}
