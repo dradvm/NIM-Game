@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/NIM-Game/static/css/main.d48155cd.css",
-    "main.js": "/NIM-Game/static/js/main.4bf0fe97.js",
+    "main.js": "/NIM-Game/static/js/main.2f8d8f3f.js",
     "static/js/885.5de330b7.chunk.js": "/NIM-Game/static/js/885.5de330b7.chunk.js",
     "static/js/488.507842e4.chunk.js": "/NIM-Game/static/js/488.507842e4.chunk.js",
     "static/media/bot.png": "/NIM-Game/static/media/bot.d9bb1584f726bcce195a.png",
@@ -14,12 +14,12 @@
     "static/media/shape.png": "/NIM-Game/static/media/shape.632706ac985a50435b1d.png",
     "index.html": "/NIM-Game/index.html",
     "main.d48155cd.css.map": "/NIM-Game/static/css/main.d48155cd.css.map",
-    "main.4bf0fe97.js.map": "/NIM-Game/static/js/main.4bf0fe97.js.map",
+    "main.2f8d8f3f.js.map": "/NIM-Game/static/js/main.2f8d8f3f.js.map",
     "885.5de330b7.chunk.js.map": "/NIM-Game/static/js/885.5de330b7.chunk.js.map",
     "488.507842e4.chunk.js.map": "/NIM-Game/static/js/488.507842e4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d48155cd.css",
-    "static/js/main.4bf0fe97.js"
+    "static/js/main.2f8d8f3f.js"
   ]
 }
