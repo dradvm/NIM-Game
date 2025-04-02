@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, ipcMain, nativeImage } = require('electron');
+const { app, BrowserWindow, screen, ipcMain, nativeImage, Menu } = require('electron');
 const path = require('path');
 let mainWindow;
 
@@ -19,6 +19,8 @@ function createWindow() {
         autoHideMenuBar: true,
         icon: path.join(__dirname, "assets/favicon.png")
     });
+    Menu.setApplicationMenu(null);
+
     mainWindow.loadURL('https://dradvm.github.io/NIM-Game');
     mainWindow.on('closed', () => {
         mainWindow = null;

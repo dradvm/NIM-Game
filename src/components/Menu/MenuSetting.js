@@ -3,7 +3,6 @@ import Screen from "@constants/screen"
 import Game from "@constants/game"
 import SocketContext from "../Context/SocketContext";
 import GameContext from "../Context/GameContext";
-const { ipcRenderer } = window.require('electron');
 
 
 export default memo(function MenuSetting({ setIsEscape }) {
@@ -17,9 +16,6 @@ export default memo(function MenuSetting({ setIsEscape }) {
         setScreen(Screen.menu)
     }, [stopAudioRef])
 
-    const quitGame = useCallback(() => {
-        ipcRenderer.send('close-app', [])
-    })
 
     return (
         <div className="z-10 fixed absolute h-full w-full flex justify-around items-center ">
@@ -50,11 +46,6 @@ export default memo(function MenuSetting({ setIsEscape }) {
                         }}
                         className={`w-full font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-5 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-3 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
                         Trở về màn hình chính
-                    </div>
-                    <div
-                        onClick={quitGame}
-                        className={`w-full font-medium text-white hover:-translate-y-1 active:-translate-y-0.5 select-none cursor-pointer ease-out duration-100 flex items-center justify-around mt-3 bg-neutral-950 hover:bg-neutral-900 rounded px-6 py-3 shadow-[0_0_0.8rem_transparent,0_0_1.6rem_transparent,inset_0_-0.8rem_2.4rem_transparent,inset_0_-0.2rem_0_0_black]`}>
-                        Thoát trò chơi
                     </div>
                 </div>
             </div>
