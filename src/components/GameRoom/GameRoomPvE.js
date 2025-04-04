@@ -13,6 +13,7 @@ export default memo(function GameRoomPvE() {
     const { botMode, isFirstPlayer } = useContext(GameContext)
     const [gameTurn, setGameTurn] = useState(isFirstPlayer ? Player.player : Player.computer)
     const [score, setScore] = useState({ player1: 0, player2: 0 })
+    const [toggleResetGame, setToggleResetGame] = useState(false)
     const numberGonggiBox = botMode.level.numberGonggiBox
     const [gonggis, setGonggis] = useState(
         Array(numberGonggiBox).fill(0).map(() => {
@@ -133,7 +134,7 @@ export default memo(function GameRoomPvE() {
     }, [getGonggisNumberInBox])
 
     useEffect(() => {
-
+        console.log("Change Game Turn")
         if (!isEndGame()) {
             if (gameTurn === Player.computer) {
                 handleComputerTurn()
@@ -144,12 +145,12 @@ export default memo(function GameRoomPvE() {
         else {
             handleScore(gameTurn !== Player.player)
         }
-    }, [gameTurn])
+    }, [gameTurn, toggleResetGame])
 
 
     return (
         <SocketContext.Provider value={{ socketRef }}>
-            <NimContext.Provider value={{ gameTurn, setGameTurn, endPlayerTurn, setGonggis, gonggis, score, isEndGame }}>
+            <NimContext.Provider value={{ gameTurn, setGameTurn, endPlayerTurn, setGonggis, gonggis, score, isEndGame, setToggleResetGame }}>
                 <GameRoom />
             </NimContext.Provider>
         </SocketContext.Provider>

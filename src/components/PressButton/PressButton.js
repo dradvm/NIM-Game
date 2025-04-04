@@ -4,6 +4,7 @@ import { Text } from "@react-three/drei";
 import { memo, useContext, useMemo } from "react";
 import pixelFont from "../../fonts/PixelifySans-VariableFont_wght.ttf";
 import GameContext from "@components/Context/GameContext";
+import Game from '@constants/game';
 
 export default memo(function PressButton({
     lengthBox = 8,
@@ -13,7 +14,7 @@ export default memo(function PressButton({
     handleFunction = () => { },
     ...props
 }) {
-    const { isFirstPlayer } = useContext(GameContext)
+    const { isFirstPlayer, gameMode } = useContext(GameContext)
     const length = useMemo(() => lengthBox, [lengthBox])
     const width = useMemo(() => widthBox, [widthBox])
     const height = useMemo(() => heightBox, [heightBox])
@@ -42,7 +43,7 @@ export default memo(function PressButton({
                 <Text
                     font={pixelFont}
                     position={[0, height / 2 + 0.1, 0]}
-                    rotation={[-Math.PI / 2, 0, (isFirstPlayer ? 0 : Math.PI)]}
+                    rotation={[-Math.PI / 2, 0, ((isFirstPlayer || gameMode === Game.gamePvE) ? 0 : Math.PI)]}
                     fontSize={1}
                     color="white"
                     anchorX="center"

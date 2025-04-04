@@ -24,7 +24,7 @@ export default memo(function GameRoom() {
 
     const { gameMode, isFirstPlayer } = useContext(GameContext)
     const { socketRef } = useContext(SocketContext)
-    const { gonggis, gamePlayer, gameTurn, score, setGonggis, setGameTurn, isEndGame, players } = useContext(NimContext)
+    const { gonggis, gamePlayer, gameTurn, score, setGonggis, setGameTurn, isEndGame, players, setToggleResetGame } = useContext(NimContext)
     const numberGonggiBox = useMemo(() => gonggis.length, [gonggis])
     const [isEscape, setIsEscape] = useState(false)
     const [gonggiItems, setGonggiItems] = useState([])
@@ -44,6 +44,7 @@ export default memo(function GameRoom() {
 
     const resetGame = useCallback(() => {
         if (isEndGame()) {
+            console.log("A")
             if (gameMode === Game.gamePvE) {
                 setGonggis(Array(numberGonggiBox).fill(0).map(() => {
                     const randomSize = Random.randomNumber(1, numberGonggiBox)
@@ -54,13 +55,14 @@ export default memo(function GameRoom() {
                         shape: Random.randomShape()
                     }));
                 }))
-                setGameTurn(Player.player)
+                setGameTurn(isFirstPlayer ? Player.player : Player.computer)
+                setToggleResetGame((prev) => !prev)
             }
             else {
                 socketRef.current.emit("resetGame")
             }
         }
-    }, [setGonggis, numberGonggiBox, isEndGame, setGameTurn, gameMode, socketRef])
+    }, [setGonggis, numberGonggiBox, isEndGame, setGameTurn, gameMode, socketRef, isFirstPlayer])
 
     useEffect(() => {
 
