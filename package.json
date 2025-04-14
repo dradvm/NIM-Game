@@ -1,7 +1,7 @@
 {
   "name": "nim",
   "homepage": "https://dradvm.github.io/NIM-Game",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Nim Game",
   "author": "Duy Nguyen",
