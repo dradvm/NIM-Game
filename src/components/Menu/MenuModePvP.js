@@ -94,7 +94,7 @@ export default memo(function MenuModePvP() {
                                             <div className="w-16">
                                                 {room.id}
                                             </div>
-                                            <div className="w-60">
+                                            <div className="w-60 break-all">
                                                 {room.name}
                                             </div>
                                             <div className="w-24 text-center">
